@@ -1,6 +1,10 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text } from 'react-native';
 
+import './config/ReatotronConfig';
+
+console.tron.log('TESTANDO A CONFIG DO REACTTRON', 2 + 3);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

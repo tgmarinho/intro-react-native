@@ -10,6 +10,7 @@ module.exports = {
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
+    __DEV__: 'readonly',
   },
   parser: 'babel-eslint', // para enteder as ultimas versões do Ecma Script
   parserOptions: {
