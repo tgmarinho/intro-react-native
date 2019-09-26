@@ -1,15 +1,5 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
-
-const App = () => {
-  return (
-    <>
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.welcome}>Bem vindo ao RN</Text>
-      </SafeAreaView>
-    </>
-  );
-};
+import { SafeAreaView, StyleSheet, Text } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,5 +12,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+const App = () => {
+  return (
+    <>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.welcome}>Bem vindo ao RN</Text>
+      </SafeAreaView>
+    </>
+  );
+};
 
 export default App;
