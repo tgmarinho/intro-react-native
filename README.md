@@ -1,37 +1,25 @@
-## Aula 07 - Configurando StatusBar
+## Aula 08 - Styled Components
 
-A [Status Bar](https://facebook.github.io/react-native/docs/statusbar) é onde aparece o horário a o status da bateria do celular, e por padrão ela vei preto no iOS, no Android cinza.
-E dependendo do seu layout é interessante que ela fique com outra cor, por exemplo branco.
-
-Para utilizar bastar importar `StatusBar` do propróio `react-native`:
-
-`src/index.js`:
+O Styled Component funciona quase 100% como na Web, salvo algumas alterações. Essa lib é full javascript, então só instalar no projeto com RN e usar.
 
 ```
-import React from 'react';
-import { StatusBar } from 'react-native';
-
-import './config/ReatotronConfig';
-
-import Routes from './routes';
-
-const App = () => (
-  <>
-    <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
-    <Routes />
-  </>
-);
-
-export default App;
+yarn add styled-components
 ```
 
-E poderemos ver que o [StatusBar](https://facebook.github.io/react-native/docs/statusbar) ficou branco no emulador, a hora, barra do wifi e da bateria.
+Depois de instalar, basta criar um arquivo: `styles.js`:
 
-Para o Android a gente passa essa configuração a mais:
 ```
-backgroundColor="#7159c1"
+import styled from  'styled-components/native';
+
+export  const Container = styled.View``;
 ```
 
-tem outras propriedades também, só apertar cmd ou ctrl + espaço no componente para ver as opções.
+Mudou que agora temos que importar o `/native` e também não temos uma `div` e sim uma `View`.  Temos que usar as tags nativas do React Native.
 
-Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-07-configurando-statusbar](https://github.com/tgmarinho/intro-react-native/tree/aula-07-configurando-statusbar)
+Motivo de usar Styled Component  é poder escrever o CSS igual eu escrevo na web e também reaproveitar o CSS de uma aplicação React  em um app com React Native e apenas mudar os componentes, a mudança é bem menor. E no RN algumas propriedades de estilização são diferentes da web normal mesmo usando o CSS in JS com StyleSheet.
+
+No React Native não tem estilização global igual temos na web, onde estilizamos o body, a div, h1, p no reset. Não tem como estilizar só pelo nome da tag.
+
+O que podemos fazer é criar pequenos componentes e reutilizar em vários lugares.
+
+Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-08-styled-components](https://github.com/tgmarinho/intro-react-native/tree/aula-08-styled-components)
