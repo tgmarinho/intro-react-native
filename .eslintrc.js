@@ -33,5 +33,6 @@ module.exports = {
       },
     ],
     'import/prefer-default-export': 'off', // para garantir que import/export sem ser apenas o i/e default
+    'react/state-in-constructor': 'off',
   },
 };
