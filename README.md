@@ -1,114 +1,125 @@
-## Aula 10 - Acessando API do Github
+## Aula 11 - Estilizando a listagem
 
-Quando o usuário digitar o nome de usuário e clicar no botão ok, temos que pegar os dados dele no github.
+Vamos estilizar a Listagem de usuários.
 
-Como precisamos gerenciar estados, precisamos converter o stateless component para statefull component usando class ou hooks, nesse primeiro momento vamos usar class.
+A listagem no RN é diferente da Web porque no RN não tem a tag ul e li e também não fazemos o map. O RN já tem um componente próprio para isso: FlatList.
 
-Como vamos consultar um API externa, então vamos utilizar o axios:
-
-```
-yarn add axios
-```
-
-Vamos criar uma pasta `services` dentro da pasta `src` e depois configurar a baseUrl da api do github e exportar para podermos fazer as chamadas get.
+No mesmo componente do index.js da Main, importamos mais componentes de estilização que criamos.
 
 ```
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'https://api.github.com',
-});
-
-export default api;
+...
+import {
+  Container,
+  Form,
+  Input,
+  SubmitButton,
+  List,
+  Avatar,
+  User,
+  Name,
+  Bio,
+  ProfileButton,
+  ProfileButtonText,
+} from './styles';
+...
 ```
 
-Depois adicionamos duas variáveis de estado, newUser para pegar o valor digitado e a users para poder armazenar os usuários.
-
-Crio o método que é chamando quando o usuário clica em `send` ou clica no botão enviar `+`.
-Nele pego o usuário digitado e passo para a chamada a api do github, que retorna uma promisse resolvida com os dados no `response`, enfim pego os dados do `response` e guardo no objeto `data`, o qual utilizo para colocar no array de users, criando um novo array passando os valores antigos pelo spred operation e passo o novo valor como segundo parâmetro, e limpo a variável `newUser` para poder digitar novamente.
+E adicionamos no final do `</Form>`:
 
 ```
-import React, { Component } from 'react';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Keyboard } from 'react-native';
-import { Container, Form, Input, SubmitButton } from './styles';
-import api from '../../services/api';
-
-Icon.loadFont();
-
-class Main extends Component {
-  state = {
-    newUser: '',
-    users: [],
-  };
-
-  handleAddUser = async () => {
-    const { users, newUser } = this.state;
-    const response = await api.get(`/users/${newUser}`);
-    const data = {
-      name: response.data.name,
-      login: response.data.login,
-      bio: response.data.bio,
-      avatar: response.data.avatar_url,
-    };
-
-    this.setState({ users: [...users, data], newUser: '' });
-
-    Keyboard.dismiss();
-  };
-
-  render() {
-    const { users, newUser } = this.state;
-
-    return (
-      <Container>
-        <Form>
-          <Input
-            autoCorrect={false}
-            autoCapitalize="none"
-            placeholder="Adicionar usuário"
-            value={newUser}
-            onChangeText={text => this.setState({ newUser: text })}
-            returnKeyType="send"
-            onSubmitEditing={this.handleAddUser}
-          />
-          <SubmitButton onPress={this.handleAddUser}>
-            <Icon name="add" size={20} color="#FFF" />
-          </SubmitButton>
-        </Form>
-      </Container>
-    );
-  }
-}
-
-Main.navigationOptions = {
-  title: 'Usuários',
-};
-
-export default Main;
+ <List
+   data={users}
+   keyExtrator={user => user.login}
+   renderItem={({ item }) => (
+     <User>
+       <Avatar source={{ uri: item.avatar }} />
+       <Name>{item.name}</Name>
+       <Bio>{item.bio}</Bio>
+       <ProfileButton onPress={() => {}}>
+         <ProfileButtonText>Ver perfil</ProfileButtonText>
+       </ProfileButton>
+     </User>
+   )}
+ />
 ```
 
-Esse código server para fechar o teclado após a operação do método.
+É muito legal ver que os componentes React Native com apenas estilização, sem lógica, e ainda com estilização separada por componente.
+
+Por fim criamos os componentes estilizados:
 ```
-Keyboard.dismiss();
+export const List = styled.FlatList.attrs({
+  showsVerticalScrollIndicator: false,
+})`
+  margin-top: 20px;
+`;
+
+export const User = styled.View`
+  align-items: center;
+  margin: 0 20px 30px;
+`;
+
+export const Avatar = styled.Image`
+  width: 64px;
+  height: 64px;
+  border-radius: 32px;
+  background: #eee;
+`;
+
+export const Name = styled.Text`
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  margin-top: 4px;
+  text-align: center;
+`;
+
+export const Bio = styled.Text.attrs({
+  numberOfLines: 2,
+})`
+  font-size: 13px;
+  line-height: 18px;
+  color: #999;
+  margin-top: 5px;
+  text-align: center;
+`;
+
+export const ProfileButton = styled(RectButton)`
+  margin-top: 10px;
+  align-self: stretch;
+  border-radius: 4px;
+  background: #6159c1;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+`;
+
+export const ProfileButtonText = styled.Text`
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+`;
 ```
 
+Destaque para o atributo:
 ```
-// armazena o valor do newUser
-value={newUser}
-// a cada alteração no texto é salvo no estado com o novo valor do text
-onChangeText={text => this.setState({ newUser: text })}
-// Para o teclado virtual poder submeter o formulário
-returnKeyType="send" //
-// Quando clicar em send chamar essa função
-onSubmitEditing={this.handleAddUser} //
+ showsVerticalScrollIndicator: false,
 ```
+Serve para o `FlatList` não mostar a barra de rolagem, dando uma experiência mais legal no app.
+
 ```
-  // Chama a função para adicionar o usuário
-  <SubmitButton onPress={this.handleAddUser}>
+...
+styled.Text.attrs({
+	numberOfLines: 2,
+})`
+...
 ```
 
-Vale ressaltar que toda a chamada a API, o Reactotron faz o log exibe o status e os dados de resposta da requisição, sem precisar ter que colocar o `console.tron.log`.
+Serve para cortar o texto em duas linhas e colocar `...` no final.
+
+Confira o resultado até aqui:
+
+![Listagem de Usuários do Github](https://github.com/tgmarinho/Images/blob/master/bootcamp-rocketseat/lista-dev-intro-rn.png?raw=true)
 
 
-Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-10-acessando-api-github](https://github.com/tgmarinho/intro-react-native/tree/aula-10-acessando-api-github)
+Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-11-estilizando-listagem](https://github.com/tgmarinho/intro-react-native/tree/aula-11-estilizando-listagem)
