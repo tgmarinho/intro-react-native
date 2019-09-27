@@ -1,25 +1,47 @@
-## Aula 08 - Styled Components
+## Aula 09 - Estilizando Formulário
 
-O Styled Component funciona quase 100% como na Web, salvo algumas alterações. Essa lib é full javascript, então só instalar no projeto com RN e usar.
+Vamos desenvolver uma aplicação que consome a API Rest do Github, no formulário ele irá informar o nome do usuário e vamos pegar algumas informações desse usuário e salvar.
 
-```
-yarn add styled-components
-```
-
-Depois de instalar, basta criar um arquivo: `styles.js`:
+Para utilizar ícones no React Native temos que instalar uma lib:
 
 ```
-import styled from  'styled-components/native';
-
-export  const Container = styled.View``;
+yarn add react-native-vector-icons
 ```
 
-Mudou que agora temos que importar o `/native` e também não temos uma `div` e sim uma `View`.  Temos que usar as tags nativas do React Native.
+Ela vem com vários ícons legais do MaterialIcons, Font Awesome, etc... pra ver todos [clique aqui](https://oblador.github.io/react-native-vector-icons/).
 
-Motivo de usar Styled Component  é poder escrever o CSS igual eu escrevo na web e também reaproveitar o CSS de uma aplicação React  em um app com React Native e apenas mudar os componentes, a mudança é bem menor. E no RN algumas propriedades de estilização são diferentes da web normal mesmo usando o CSS in JS com StyleSheet.
+E com a versão do RN q estou `"react-native":  "0.61.1",`
 
-No React Native não tem estilização global igual temos na web, onde estilizamos o body, a div, h1, p no reset. Não tem como estilizar só pelo nome da tag.
+**Não precisamos** fazer:
 
-O que podemos fazer é criar pequenos componentes e reutilizar em vários lugares.
+```
+react-native link react-native-vector-icons
+```
 
-Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-08-styled-components](https://github.com/tgmarinho/intro-react-native/tree/aula-08-styled-components)
+Mas [precisamos](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md) entrar na pasta do `ios` e executar `pod install`, voltar `cd .. ` e executar `react-native run-ios` na raiz do projeto novamente.
+
+Para utilizar precisamos importar no código, nesse caso estou importando do MaterialIcons.
+
+```
+import Icon from 'react-native-vector-icons/MaterialIcons'
+Icon.loadFont();
+```
+
+Sim, esse `Icon.loadFont()`  é obrigatório, se você trocar o MaterialIcons por outra fonte por exemplo:  FontAwesome, esse loadFont() tem que ser chamado novamente, ou seja, é melhor deixar ele no código mesmo que você já tenha executado ele uma vez com uma outra fonte. Interessante colocar essa configuração em um arquivo de configuração, por exemplo: `loadFonts.js`.
+
+E agora só aplicar o Icon no seu código:
+
+```
+...
+<SubmitButton>
+	<Icon name="add" size={20} color="#FFF" />
+</SubmitButton>
+...
+```
+
+O restante do código está no commit abaixo.
+
+Fonte: [https://www.tgmarinho.com/utilizando-%C3%ADcones-no-react-native-ios/](https://www.tgmarinho.com/utilizando-%C3%ADcones-no-react-native-ios/)
+
+
+Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-09-estilizando-formulario](https://github.com/tgmarinho/intro-react-native/tree/aula-09-estilizando-formulario)
