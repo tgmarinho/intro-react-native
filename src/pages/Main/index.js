@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Keyboard } from 'react-native';
+import { Keyboard, ActivityIndicator } from 'react-native';
 import {
   Container,
   Form,
@@ -22,10 +22,13 @@ class Main extends Component {
   state = {
     newUser: '',
     users: [],
+    loading: false,
   };
 
   handleAddUser = async () => {
     const { users, newUser } = this.state;
+
+    this.setState({ loading: true });
     const response = await api.get(`/users/${newUser}`);
     const data = {
       name: response.data.name,
@@ -34,13 +37,13 @@ class Main extends Component {
       avatar: response.data.avatar_url,
     };
 
-    this.setState({ users: [...users, data], newUser: '' });
+    this.setState({ users: [...users, data], newUser: '', loading: false });
 
     Keyboard.dismiss();
   };
 
   render() {
-    const { users, newUser } = this.state;
+    const { users, newUser, loading } = this.state;
 
     return (
       <Container>
@@ -55,7 +58,11 @@ class Main extends Component {
             onSubmitEditing={this.handleAddUser}
           />
           <SubmitButton onPress={this.handleAddUser}>
-            <Icon name="add" size={20} color="#FFF" />
+            {loading ? (
+              <ActivityIndicator loading={loading} color="#FFF" />
+            ) : (
+              <Icon name="add" size={20} color="#FFF" />
+            )}
           </SubmitButton>
         </Form>
 
