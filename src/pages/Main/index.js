@@ -1,6 +1,8 @@
 import React from 'react';
-import Icon from 'react-native-vector-icons/Octicons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Container, Form, Input, SubmitButton } from './styles';
+
+Icon.loadFont();
 
 export default function Main() {
   return (
@@ -12,7 +14,7 @@ export default function Main() {
           placeholder="Adicionar usuário"
         />
         <SubmitButton>
-          <Icon name="diff-added" size={20} color="#FFF" />
+          <Icon name="add" size={20} color="#FFF" />
         </SubmitButton>
       </Form>
     </Container>
