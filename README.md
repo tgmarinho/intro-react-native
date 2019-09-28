@@ -1,65 +1,42 @@
-## Aula 13 - Salvando no Storage
+## Aula 14 - Realizando navegação
 
-Vamos salvar os dados do usuário no stoage do celular, de forma que podemos consultar os valores diretamente do celular se ficarmos sem internet poderemos pegar esses dados, deletar, sem problema algum.
+Agora, vamos trabalhar com navegação entre rotas, quando o usuário clicar em um botão, vamos redirecionar para outra rota, no nosso app, quando clicar em `VER PERFIL` vamos para outra tela.
 
-Primeiro vamos instalar a lib:
-```
-yarn add @react-native-community/async-storage
-```
+No arquivo de `routes.js` no método `createStackNavigator` onde configuramos as rotas da aplicação, ele cria uma `prop` chamada `navigate`.
 
-Depois rodar os comandos:
+E a partir dessa prop `navigate` que chamamos as rotas, pois no React Native, não tem um tag `<a href>`  do `html (jsx)` ou `Link` do `react-router-dom`.
 
-para iOS:
-```
-cd ios && pod install & cd ..
-react-native run-ios
-```
-e no Android:
-```
-react-native run-android
-```
-
-`AsyncStorage` é semelhante ao LocalStorage do nagegador, e ele é assíncrono então temos que usar `async/await` do Javascript.
-
-
-Não tem um tamanho limite para salvar no `AsyncStorage`, na verdade dependendo da capacidade de armazenamento do celular do usuário, enquanto estiver espaço em disco, pode armazenar os dados.
-
-Para utilizar é muito simples, basta importar:
+Então no botão `ProfileButton` no método `onPress`  passamos o usuário como referência para uma nova função que vai lidar com a navegação:
 
 ```
-import AsyncStorage from  '@react-native-community/async-storage';
+...
+<ProfileButton  onPress={() =>  this.handleNavigate(item)}>
+...
 ```
 
-Criar uma constante que armazena uma chave, pois o AsyncStorage é um banco de dados em SQLITE3 ou [https://rocksdb.org/](https://rocksdb.org/) no Android que utiliza chave e valor.
+A função `handleNavigate` recebe o usuário, e nós desetruturamos a prop `navigation` de dentro das props e essa prop veio do `routes.js` lá do método `createStackNavigator`. Pegamos o usuário e chamamos a função `navigate` informando a rota `User` que o `routes.js` conhece e passamos os dados do usuário como um objeto:
 
 ```
-const KEY_ASYNC_STORAGE =  '@intro-rn:users:key';
+...
+  handleNavigate = user => {
+    const { navigation } = this.props;
+    navigation.navigate('User', { user });
+  };
+  ...
 ```
 
-E igual na web, utilizamos o ciclo de vida do React:
-
-Sempre que atualizar o estado do array de users, se tiver alteração então altera o valor da chave `KEY_ASYNC_STORAGE` passando o novo array com o dado já atualizado, aqui nesse caso não é imutável, realmente alteramos o valor sem ter que fazer cópia do array, etc, que nem no `this.setState`.
+E por fim fazemos que a página `Users.js` receba os parametros que está no navigation:
 
 ```
-  componentDidUpdate(_, prevState) {
-    const { users } = this.state;
-    if (prevState.users !== users) {
-      AsyncStorage.setItem(KEY_ASYNC_STORAGE, JSON.stringify(users));
-    }
-  }
+...
+export default function User({ navigation }) {
+  console.tron.log(navigation.getParam('user'));
+  return <View />;
+}
+...
 ```
+Acessamos os dados chamando a função `getParam` passando a mesma chave `user` que usamos anteriormente.
 
-E quando fazemos um refresh ou saimos e voltamos para a tela de usuários e componente é montado, então nós buscamos do `AsyncStorage` os dados da chave `KEY_ASYNC_STORAGE` e preenchemos ela no estado de `users`.
+Pronto, agora os dados do usuário estão logando no Reactotron.
 
-```
- async componentDidMount() {
-    const users = await AsyncStorage.getItem(KEY_ASYNC_STORAGE);
-    if (users) {
-      this.setState({ users: JSON.parse(users) });
-    }
-  }
-```
-
-Pronto, agora já temos os dados salvos e podemos alterar, remover, ou adicionar mais, porém em outra chave.
-
-Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-13-salvando-no-storage](https://github.com/tgmarinho/intro-react-native/tree/aula-13-salvando-no-storage)
+Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-14-realizando-navegacao ](https://github.com/tgmarinho/intro-react-native/tree/aula-14-realizando-navegacao )
