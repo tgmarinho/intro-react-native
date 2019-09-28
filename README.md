@@ -1,42 +1,56 @@
-## Aula 14 - Realizando navegação
+## Aula 15 - Buscando dados da API
 
-Agora, vamos trabalhar com navegação entre rotas, quando o usuário clicar em um botão, vamos redirecionar para outra rota, no nosso app, quando clicar em `VER PERFIL` vamos para outra tela.
+Quando usuário clicar em VER PERFIL o componente de usuário vai mostar o perfil do usuário e vamos buscar os repositórios que o usuário favoritou dando *start*.
 
-No arquivo de `routes.js` no método `createStackNavigator` onde configuramos as rotas da aplicação, ele cria uma `prop` chamada `navigate`.
-
-E a partir dessa prop `navigate` que chamamos as rotas, pois no React Native, não tem um tag `<a href>`  do `html (jsx)` ou `Link` do `react-router-dom`.
-
-Então no botão `ProfileButton` no método `onPress`  passamos o usuário como referência para uma nova função que vai lidar com a navegação:
+Primeiro vamos mostar o header com o nome do usuário.
 
 ```
-...
-<ProfileButton  onPress={() =>  this.handleNavigate(item)}>
-...
+static navigationOptions = ({navigation}) => ({
+  title: navigation.getParam('user').name
+});
 ```
 
-A função `handleNavigate` recebe o usuário, e nós desetruturamos a prop `navigation` de dentro das props e essa prop veio do `routes.js` lá do método `createStackNavigator`. Pegamos o usuário e chamamos a função `navigate` informando a rota `User` que o `routes.js` conhece e passamos os dados do usuário como um objeto:
+[navigationOptions](https://reactnavigation.org/docs/en/headers.html) é um atributo estático que serve para colocarmos um title no header da tela navegada, entre outras opções.
 
 ```
-...
-  handleNavigate = user => {
-    const { navigation } = this.props;
-    navigation.navigate('User', { user });
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { View } from 'react-native';
+// import { Container } from './styles';
+import api from '../../services/api';
+
+export default class User extends Component {
+  static navigationOptions = ({ navigation }) => ({
+    title: navigation.getParam('user').name,
+  });
+
+  state = {
+    stars: [],
   };
-  ...
-```
 
-E por fim fazemos que a página `Users.js` receba os parametros que está no navigation:
+  async componentDidMount() {
+    const { navigation } = this.props;
+    const user = navigation.getParam('user');
+    const response = await api.get(`/users/${user.login}/starred`);
 
-```
-...
-export default function User({ navigation }) {
-  console.tron.log(navigation.getParam('user'));
-  return <View />;
+    this.setState({ stars: response.data });
+  }
+
+  render() {
+    const { stars } = this.state;
+    return <View />;
+  }
 }
-...
+
+User.propTypes = {
+  navigation: PropTypes.shape({
+    getParam: PropTypes.func,
+  }).isRequired,
+};
 ```
-Acessamos os dados chamando a função `getParam` passando a mesma chave `user` que usamos anteriormente.
 
-Pronto, agora os dados do usuário estão logando no Reactotron.
+Declaramos o `componentDidMount` como metódo async porque depois de montar a tela, o método vai ser chamado pelo React e vai chamar a api do github para buscar os repositórios que o usuário favoritou.
 
-Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-14-realizando-navegacao ](https://github.com/tgmarinho/intro-react-native/tree/aula-14-realizando-navegacao )
+Por fim, apenas verificamos no Reactotron se a API foi chamada, detalhe que não tem o `console.tron.log`, pois quando é feita um chamada a API o Reactotron já faz o log pra gente *automágicamente*.
+
+Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-15-buscando-dados-da-api](https://github.com/tgmarinho/intro-react-native/tree/aula-15-buscando-dados-da-api)
