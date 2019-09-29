@@ -20,7 +20,7 @@ import api from '../../services/api';
 
 Icon.loadFont();
 
-const KEY_ASYNC_STORAGE = '@intro-rn:users:key';
+const KEY_ASYNC_STORAGE = '@intro-rn:user:key';
 
 class Main extends Component {
   state = {

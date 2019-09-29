@@ -1,56 +1,76 @@
-## Aula 15 - Buscando dados da API
+## Aula 16 - Listando favoritos
 
-Quando usuário clicar em VER PERFIL o componente de usuário vai mostar o perfil do usuário e vamos buscar os repositórios que o usuário favoritou dando *start*.
+Agora vamos estilizar a página que lista os repositórios favoritos dos usuários.
 
-Primeiro vamos mostar o header com o nome do usuário.
+O trabalho aqui, basicamente é apena de estilização:
 
-```
-static navigationOptions = ({navigation}) => ({
-  title: navigation.getParam('user').name
-});
-```
+Criou o arquivo `styles.js` dentro da pasta `User`
 
-[navigationOptions](https://reactnavigation.org/docs/en/headers.html) é um atributo estático que serve para colocarmos um title no header da tela navegada, entre outras opções.
+Importo os novos componetes estilizados na `index.js` do User:
 
 ```
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { View } from 'react-native';
-// import { Container } from './styles';
-import api from '../../services/api';
+import {
+  Container,
+  Header,
+  Avatar,
+  Name,
+  Bio,
+  Stars,
+  Starred,
+  OwnerAvatar,
+  Info,
+  Author,
+  Title,
+} from './styles';
+```
 
-export default class User extends Component {
-  static navigationOptions = ({ navigation }) => ({
-    title: navigation.getParam('user').name,
-  });
+E no método render monto a tela utilizando os componentes:
 
-  state = {
-    stars: [],
-  };
-
-  async componentDidMount() {
+```
+render() {
+    const { stars } = this.state;
     const { navigation } = this.props;
     const user = navigation.getParam('user');
-    const response = await api.get(`/users/${user.login}/starred`);
 
-    this.setState({ stars: response.data });
+    return (
+      <Container>
+        <Header>
+          <Avatar source={{ uri: user.avatar }} />
+          <Name>{user.name}</Name>
+          <Bio>{user.bio}</Bio>
+        </Header>
+
+        <Stars
+          data={stars}
+          keyExtractor={star => String(star.id)}
+          renderItem={({ item }) => (
+            <Starred>
+              <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
+              <Info>
+                <Title>{item.name}</Title>
+                <Author>{item.owner.login}</Author>
+              </Info>
+            </Starred>
+          )}
+        />
+      </Container>
+    );
   }
-
-  render() {
-    const { stars } = this.state;
-    return <View />;
-  }
-}
-
-User.propTypes = {
-  navigation: PropTypes.shape({
-    getParam: PropTypes.func,
-  }).isRequired,
-};
 ```
 
-Declaramos o `componentDidMount` como metódo async porque depois de montar a tela, o método vai ser chamado pelo React e vai chamar a api do github para buscar os repositórios que o usuário favoritou.
+Detalhe que estamos utilizando a `FlatList` para poder exibir uma lista dinâmica e *escrolável*.
 
-Por fim, apenas verificamos no Reactotron se a API foi chamada, detalhe que não tem o `console.tron.log`, pois quando é feita um chamada a API o Reactotron já faz o log pra gente *automágicamente*.
+Pronto, agoara só falta o desafio, que será apenas para refinar a aplicação.
 
-Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-15-buscando-dados-da-api](https://github.com/tgmarinho/intro-react-native/tree/aula-15-buscando-dados-da-api)
+Veja abaixo o resultado final até aqui:
+
+![It's working](https://github.com/tgmarinho/Images/blob/master/bootcamp-rocketseat/react-native-aula-16.gif?raw=true)
+
+Algumas imagens:
+
+![Tela de Usuários](https://github.com/tgmarinho/Images/blob/master/bootcamp-rocketseat/list-users-intro-rn.png?raw=true)
+
+![Tela de Repositórios](https://github.com/tgmarinho/Images/blob/master/bootcamp-rocketseat/list-repos-starred-intro-rn.png?raw=true)
+
+Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-16-listando-favoritos](https://github.com/tgmarinho/intro-react-native/tree/aula-16-listando-favoritos)
+
