@@ -12,6 +12,7 @@ import {
   Info,
   Author,
   Title,
+  Loading,
 } from './styles';
 import api from '../../services/api';
 
@@ -22,18 +23,61 @@ export default class User extends Component {
 
   state = {
     stars: [],
+    page: 1,
+    loading: false,
+    refreshing: false,
   };
 
-  async componentDidMount() {
-    const { navigation } = this.props;
-    const user = navigation.getParam('user');
-    const response = await api.get(`/users/${user.login}/starred`);
-
-    this.setState({ stars: response.data });
+  componentDidMount() {
+    this.load();
   }
 
-  render() {
+  load = async (page = 1) => {
     const { stars } = this.state;
+    const { navigation } = this.props;
+    const user = navigation.getParam('user');
+
+    const response = await api.get(`/users/${user.login}/starred`, {
+      params: { page },
+    });
+
+    this.setState({
+      stars: page >= 2 ? [...stars, ...response.data] : response.data,
+      page,
+      loading: false,
+      refreshing: false,
+    });
+  };
+
+  loadMore = async () => {
+    const { page } = this.state;
+
+    const nextPage = page + 1;
+
+    this.load(nextPage);
+  };
+
+  refreshList = () => {
+    this.setState({ refreshing: true, stars: [] }, this.load);
+  };
+
+  handleNavigate = repository => {
+    const { navigation } = this.props;
+    navigation.navigate('Repository', { repository });
+  };
+
+  renderItem = repo => (
+    <Starred onPress={() => this.handleNavigate(repo)}>
+      <OwnerAvatar source={{ uri: repo.owner.avatar_url }} />
+      <Info>
+        <Title>{repo.name}</Title>
+        <Author>{repo.owner.login}</Author>
+      </Info>
+    </Starred>
+  );
+
+  render() {
+    const { stars, loading, refreshing } = this.state;
     const { navigation } = this.props;
     const user = navigation.getParam('user');
 
@@ -45,19 +89,19 @@ export default class User extends Component {
           <Bio>{user.bio}</Bio>
         </Header>
 
-        <Stars
-          data={stars}
-          keyExtractor={star => String(star.id)}
-          renderItem={({ item }) => (
-            <Starred>
-              <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
-              <Info>
-                <Title>{item.name}</Title>
-                <Author>{item.owner.login}</Author>
-              </Info>
-            </Starred>
-          )}
-        />
+        {loading ? (
+          <Loading />
+        ) : (
+          <Stars
+            data={stars}
+            keyExtractor={star => String(star.id)}
+            renderItem={({ item }) => this.renderItem(item)}
+            onRefresh={this.refreshList}
+            refreshing={refreshing}
+            onEndReachedThreshold={0.2}
+            onEndReached={this.loadMore}
+          />
+        )}
       </Container>
     );
   }
@@ -66,5 +110,6 @@ export default class User extends Component {
 User.propTypes = {
   navigation: PropTypes.shape({
     getParam: PropTypes.func,
+    navigate: PropTypes.func,
   }).isRequired,
 };

@@ -1,30 +1,22 @@
-## Introdução ao React Native
+## Aula Final - Desafio implementado
+### Loading de repositórios
+* Adicione um indicator de loading utilizando <ActivityIndicator /> antes de carregar a lista de repositórios favoritados na tela de detalhes do Usuário.
+Primeiro eu crio um `ActivityIndicator` customizado para exibir no centro da tela, com uma cor roxa.
+```export const Loading = styled.ActivityIndicator.attrs({  color: '#7159c1',  size: 50,})`  flex: 1;  justify-content: center;  align-items: center;  margin-top: 20px;`;```
+Crio um prop loading com valor true, e seto o loading false após o carregamento, pois depois que a lista é carregada ela não vai ficar sem itens para sair da tela e aparecer o loading.
+### Scroll infinito
+Adicione uma funcionalidade de scroll infinito na lista de repositórios favoritados. Assim que o usuário chegar nos **20%** do final de lista, busque pelos items na próxima página e adicione na lista. Seu código ficará da seguinte forma:
+```js<Stars  onEndReachedThreshold={0.2} // Carrega mais itens quando chegar em 20% do fim  onEndReached={this.loadMore} // Função que carrega mais itens  // Restante das props>```
+Para requisitar uma nova página no Github utilize um parâmetro `page` no fim da URL:
+```https://api.github.com/users/diego3g/starred?page=2```
 
-### Stack
+### Pull to Refresh
+Adicione uma funcionalidade para quando o usuário arrastar a listagem de repositórios favoritados pra baixo atualize a lista resetando o estado, ou seja, volte o estado da paginação para a página 1 exibindo apenas os 30 primeiros itens.
+A funcionalidade "Pull to Refresh" existe por padrão na FlatList e pode ser implementada através do seguinte código:
+```js<Stars  onRefresh={this.refreshList} // Função dispara quando o usuário arrasta a lista pra baixo  refreshing={this.state.refreshing} // Variável que armazena um estado true/false que representa se a lista está atualizando  // Restante das props>```
 
-- React
-- React Native
-- StyledComponents
-- Eslint, Prettier, EditorConfig
-- AsyncStorage
-- React Navigation
-- React Vector Icons
-- Axios
+### WebView
+Crie uma nova página na aplicação que vai ser acessada quando o usuário clicar em um repositório favoritado, essa página deve conter apenas o Header da aplicação. O conteúdo da página será uma WebView, ou seja, um browser integrado que exibe o atributo `html_url` presente no objeto do repositório que vem da API do Github.
+Documentação de utilização da WebView: https://github.com/react-native-community/react-native-webview/blob/master/docs/Getting-Started.md
 
-Confira abaixo o que iremos construir nesse projeto:
-
-
-![It's working](https://github.com/tgmarinho/Images/blob/master/bootcamp-rocketseat/react-native-aula-16.gif?raw=true)
-
-Algumas imagens:
-
-![Tela de Usuários](https://github.com/tgmarinho/Images/blob/master/bootcamp-rocketseat/list-users-intro-rn.png?raw=true)
-
-![Tela de Repositórios](https://github.com/tgmarinho/Images/blob/master/bootcamp-rocketseat/list-repos-starred-intro-rn.png?raw=true)
-
-Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/aula-16-listando-favoritos](https://github.com/tgmarinho/intro-react-native/tree/aula-16-listando-favoritos)
-
-
-Pode acompanhar o passo a passo no meu [blog](https://tgmarinho.com)
-
-
+Código Fonte: [https://github.com/tgmarinho/intro-react-native/tree/](https://github.com/tgmarinho/intro-react-native/tree/aula-16-listando-favoritos)aula-final-desafio-implementado
